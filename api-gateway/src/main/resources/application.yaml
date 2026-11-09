@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: work-order-ping
+              uri: lb://work-order-service
+              predicates:
+                - Path=/ping,/ping/parts
+server:
+  port: 8088
