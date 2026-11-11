@@ -1,7 +1,8 @@
 package com.sebastian.workorderservice.controller;
 
-import com.sebastian.workorderservice.dto.AssignWorkOrderRequest;
-import com.sebastian.workorderservice.dto.CreateWorkOrderRequest;
+import com.sebastian.workorderservice.client.SparePartsClient;
+import com.sebastian.workorderservice.dto.*;
+import com.sebastian.workorderservice.model.WorkOrderStatus;
 import com.sebastian.workorderservice.service.WorkOrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,9 @@ import java.util.Map;
 @RequestMapping("/work-orders")
 public class WorkOrderController {
 
-    private WorkOrderService workOrderService;
+    private final WorkOrderService workOrderService;
 
-    public WorkOrderController(WorkOrderService workOrderService){
+    public WorkOrderController(WorkOrderService workOrderService, SparePartsClient sparePartsClient){
         this.workOrderService = workOrderService;
     }
 
@@ -55,6 +56,21 @@ public class WorkOrderController {
     public ResponseEntity<Void> pass(@PathVariable("workOrderId") Integer workOrderId){
         workOrderService.pass(workOrderId, 1, true);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{workOrderId}/parts/reservations")
+    public ResponseEntity<ReservePartResponse> reservePart(@PathVariable("workOrderId") Integer workOrderId,
+                                                           @Valid @RequestBody ReserveWorkOrderPartRequest request){
+        Integer currentWorkerId = 2001;
+        ReservePartResponse response = workOrderService.reservePart(
+                workOrderId,
+                currentWorkerId,
+                request.requestId(),
+                request.partId(),
+                request.quantity());
+
+        return ResponseEntity.ok(response);
+
     }
 
 }

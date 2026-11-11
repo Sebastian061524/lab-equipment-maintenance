@@ -2,6 +2,9 @@ package com.sebastian.workorderservice.service;
 
 import com.sebastian.workorderservice.dto.CreateWorkOrderRequest;
 import com.sebastian.workorderservice.model.WorkOrder;
+import com.sebastian.workorderservice.client.SparePartsClient;
+import com.sebastian.workorderservice.dto.ReservePartRequest;
+import com.sebastian.workorderservice.dto.ReservePartResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +18,12 @@ public class WorkOrderService {
 
     private final AtomicInteger idGenerator = new AtomicInteger(0);
     private final ConcurrentHashMap<Integer, WorkOrder> workOrders = new ConcurrentHashMap<>();
+
+    private final SparePartsClient sparePartsClient;
+
+    public WorkOrderService(SparePartsClient sparePartsClient) {
+        this.sparePartsClient = sparePartsClient;
+    }
 
     public Integer create(CreateWorkOrderRequest request, Integer campusId, Integer reporterId){
         Integer id = idGenerator.incrementAndGet();
@@ -90,5 +99,20 @@ public class WorkOrderService {
         }
     }
 
+    public ReservePartResponse reservePart(Integer workOrderId, Integer currentWorkerId,
+                                           String requestId, Integer partId, Integer quantity){
+
+        WorkOrder workOrder = workOrders.get(workOrderId);
+        if(workOrder == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "工单不存在");
+        }
+        if(!workOrder.isAssignedTo(currentWorkerId)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "只有被指派的维修员才能预留备件");
+        }
+        ReservePartRequest request =
+                new ReservePartRequest(requestId, workOrderId, workOrder.getCampusId(), partId, quantity);
+
+        return sparePartsClient.reserve(request);
+    }
 
 }

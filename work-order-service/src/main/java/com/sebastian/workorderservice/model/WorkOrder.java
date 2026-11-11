@@ -39,7 +39,6 @@ public class WorkOrder {
     public synchronized void take(Integer currentWorkerId){
         if(this.status != WorkOrderStatus.PENDING_ACCEPTANCE){
             throw new IllegalStateException();
-
         }
         if (currentWorkerId == null || !currentWorkerId.equals(this.workerId)) {
             throw new SecurityException("只有被指派的维修员才能接单");
@@ -63,6 +62,10 @@ public class WorkOrder {
         } else{
             throw new IllegalStateException();
         }
+    }
+
+    public synchronized boolean isAssignedTo(Integer currentWorkerId) {
+        return currentWorkerId != null && currentWorkerId.equals(this.workerId);
     }
 
 }
