@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class WorkOrder {
     private Integer id;
-    private Integer deviceId;
-    private Integer campusId;
-    private Integer reporterId;
+    private final Integer deviceId;
+    private final Integer campusId;
+    private final Integer reporterId;
     private Integer workerId;
-    private String location;
-    private String faultDescription;
+    private final String location;
+    private final String faultDescription;
     private WorkOrderStatus status;
 
     public WorkOrder(Integer id, Integer deviceId, Integer campusId, Integer reporterId, String location, String faultDescription){
@@ -21,6 +21,20 @@ public class WorkOrder {
         this.location = location;
         this.faultDescription = faultDescription;
         this.status = WorkOrderStatus.PENDING_ASSIGNMENT;
+    }
+
+    public WorkOrder(
+            Integer id, Integer deviceId, Integer campusId, Integer reporterId,
+            Integer workerId, String location, String faultDescription,
+            WorkOrderStatus status){
+        this.id = id;
+        this.deviceId = deviceId;
+        this.campusId = campusId;
+        this.reporterId = reporterId;
+        this.workerId =  workerId;
+        this.location = location;
+        this.faultDescription = faultDescription;
+        this.status = status;
     }
 
     public synchronized void assign(Integer workerId){
@@ -68,4 +82,23 @@ public class WorkOrder {
         return currentWorkerId != null && currentWorkerId.equals(this.workerId);
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getDeviceId() {
+        return deviceId;
+    }
+
+    public Integer getReporterId() {
+        return reporterId;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getFaultDescription() {
+        return faultDescription;
+    }
 }

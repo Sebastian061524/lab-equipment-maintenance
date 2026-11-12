@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sebastian.workorderservice.mapper.OutBoxEventMapper">
+    <resultMap id="outBoxEventResultMap" type="com.sebastian.workorderservice.model.OutboxEvent">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long"/>
+            <arg column="work_order_id" javaType="java.lang.Integer"/>
+            <arg column="event_type" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insertWorkOrderCompleted">
+        insert into outbox_event(work_order_id, event_type)
+        VALUES (#{workOrderId}, 'WORK_ORDER_COMPLETED')
+    </insert>
+
+
+    <select id="findPending" resultMap="outBoxEventResultMap">
+        select id, work_order_id, event_type from outbox_event
+        where send_status = 'PENDING'
+        order by id ASC
+        limit #{limit}
+    </select>
+
+    <update id="markSent">
+        update outbox_event
+        set send_status = 'SENT'
+        where id = #{id} and send_status = 'PENDING'
+    </update>
+</mapper>

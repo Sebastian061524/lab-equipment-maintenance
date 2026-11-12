@@ -6,3 +6,20 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+  datasource:
+    url: jdbc:mysql://localhost:3306/lab_equipment_maintenance
+    username: ${WORK_ORDER_DB_USERNAME}
+    password: ${WORK_ORDER_DB_PASSWORD}
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${WORK_ORDER_MQ_USERNAME}
+    password: ${WORK_ORDER_MQ_PASSWORD}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml

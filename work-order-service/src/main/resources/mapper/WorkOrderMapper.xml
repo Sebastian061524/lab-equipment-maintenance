@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sebastian.workorderservice.mapper.WorkOrderMapper">
+    <resultMap id="workOrderResultMap" type="com.sebastian.workorderservice.model.WorkOrder">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer"/>
+            <arg column="device_id" javaType="java.lang.Integer"/>
+            <arg column="campus_id" javaType="java.lang.Integer"/>
+            <arg column="reporter_id" javaType="java.lang.Integer"/>
+            <arg column="worker_id" javaType="java.lang.Integer"/>
+            <arg column="location" javaType="java.lang.String"/>
+            <arg column="fault_description" javaType="java.lang.String"/>
+            <arg column="status" javaType="com.sebastian.workorderservice.model.WorkOrderStatus"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into work_order(device_id, campus_id, reporter_id, location, fault_description, status)
+        values (#{deviceId}, #{campusId}, #{reporterId}, #{location}, #{faultDescription}, #{status})
+    </insert>
+
+
+    <select id="findById" resultMap="workOrderResultMap">
+        select id, device_id, campus_id, reporter_id, worker_id, location, fault_description, status
+        from work_order
+        where id = #{id}
+    </select>
+
+    <update id="assign">
+        update work_order
+        set worker_id = #{workerId}, status = 'PENDING_ACCEPTANCE'
+        where id = #{id} and status = 'PENDING_ASSIGNMENT'
+    </update>
+
+    <update id="updateStatus">
+        update work_order
+        set status = #{nextStatus}
+        where id = #{id} and status = #{expectedStatus}
+    </update>
+
+
+</mapper>
