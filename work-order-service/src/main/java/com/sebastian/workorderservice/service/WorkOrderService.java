@@ -1,5 +1,6 @@
 package com.sebastian.workorderservice.service;
 
+import com.sebastian.workorderservice.dto.CompletedWorkOrderDetail;
 import com.sebastian.workorderservice.dto.CreateWorkOrderRequest;
 import com.sebastian.workorderservice.mapper.OutBoxEventMapper;
 import com.sebastian.workorderservice.mapper.WorkOrderMapper;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 
 @Service
@@ -141,6 +144,22 @@ public class WorkOrderService {
                 new ReservePartRequest(requestId, workOrderId, workOrder.getCampusId(), partId, quantity);
 
         return sparePartsClient.reserve(request);
+    }
+
+
+    public CompletedWorkOrderDetail findCompletedDetailById(Integer workOrderId){
+        if(workOrderId == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        CompletedWorkOrderDetail detail = workOrderMapper.findCompletedDetailById(workOrderId);
+        if(detail == null){
+            throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "没有找到");
+        }
+        return detail;
+    }
+
+    public List<CompletedWorkOrderDetail> findCompletedDetailsAfterId(Integer afterId, Integer limit){
+        return workOrderMapper.findCompletedDetailsAfterId(afterId, limit);
     }
 
 }

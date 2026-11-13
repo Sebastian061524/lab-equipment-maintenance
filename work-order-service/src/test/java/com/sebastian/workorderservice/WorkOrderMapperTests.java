@@ -1,5 +1,6 @@
 package com.sebastian.workorderservice;
 
+import com.sebastian.workorderservice.dto.CompletedWorkOrderDetail;
 import com.sebastian.workorderservice.dto.CreateWorkOrderRequest;
 import com.sebastian.workorderservice.mapper.OutBoxEventMapper;
 import com.sebastian.workorderservice.mapper.WorkOrderCompletionLogMapper;
@@ -124,6 +125,22 @@ public class WorkOrderMapperTests {
                 eventId
         );
         assertEquals(1, sum);
+    }
+
+    @Test
+    @Transactional
+    void testFindCompletedDetailById(){
+        Integer deviceId = 900101;
+        CreateWorkOrderRequest request = new CreateWorkOrderRequest(deviceId, "实验楼 A302", "示波器无法开机");
+        Integer id = workOrderService.create(request, 1, 1001);
+        jdbcTemplate.update("insert into device(id, model) values (?, ?)", deviceId, "X200");
+        workOrderService.assign(id, 2001, 1, 1);
+        workOrderService.take(id, 2001);
+        workOrderService.finish(id, 2001);
+        workOrderService.pass(id, 1, true);
+        CompletedWorkOrderDetail detail = workOrderMapper.findCompletedDetailById(id);
+        assertEquals(id, detail.workOrderId());
+        assertEquals("X200", detail.deviceModel());
     }
 
 }

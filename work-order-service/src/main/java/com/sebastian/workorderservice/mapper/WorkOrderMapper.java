@@ -1,9 +1,12 @@
 package com.sebastian.workorderservice.mapper;
 
+import com.sebastian.workorderservice.dto.CompletedWorkOrderDetail;
 import com.sebastian.workorderservice.model.WorkOrder;
 import com.sebastian.workorderservice.model.WorkOrderStatus;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface WorkOrderMapper {
@@ -20,6 +23,9 @@ public interface WorkOrderMapper {
             @Param("expectedStatus") WorkOrderStatus expectedStatus,
             @Param("nextStatus") WorkOrderStatus nextStatus);
 
+    CompletedWorkOrderDetail findCompletedDetailById(@Param("workOrderId") Integer workOrderId);
 
+    List<CompletedWorkOrderDetail> findCompletedDetailsAfterId(@Param("afterId") Integer afterId,
+                                                               @Param("limit") Integer limit);
 
 }

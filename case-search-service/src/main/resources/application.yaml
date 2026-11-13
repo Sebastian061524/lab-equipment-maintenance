@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: case-search-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtual-host: /
+    username: ${WORK_ORDER_MQ_USERNAME}
+    password: ${WORK_ORDER_MQ_PASSWORD}
+  ssl:
+    bundle:
+      pem:
+        elasticsearch:
+          truststore:
+            certificate: ${ELASTICSEARCH_CA_CERT}
+
+server:
+  port: 8083
+
+elasticsearch:
+  base-url: https://localhost:9201
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD}

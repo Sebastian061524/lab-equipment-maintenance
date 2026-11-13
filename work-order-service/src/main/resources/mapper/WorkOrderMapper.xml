@@ -38,5 +38,23 @@
         where id = #{id} and status = #{expectedStatus}
     </update>
 
+    <select id="findCompletedDetailById"
+            resultType="com.sebastian.workorderservice.dto.CompletedWorkOrderDetail">
+        select w.id as workOrderId, w.campus_id as campusId,
+               w.device_id as deviceId, d.model as deviceModel, w.fault_description as faultDescription
+        from work_order w LEFT JOIN device d on w.device_id = d.id
+        where w.status = 'COMPLETED' and w.id = #{workOrderId}
+    </select>
+
+    <select id="findCompletedDetailsAfterId"
+            resultType="com.sebastian.workorderservice.dto.CompletedWorkOrderDetail">
+        select w.id as workOrderId, w.campus_id as campusId,
+               w.device_id as deviceId, d.model as deviceModel, w.fault_description as faultDescription
+        from work_order w LEFT JOIN device d on w.device_id = d.id
+        where w.status = 'COMPLETED' and w.id > #{afterId}
+        ORDER BY w.id ASC
+        limit #{limit}
+    </select>
+
 
 </mapper>

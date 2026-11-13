@@ -24,3 +24,8 @@ create table if not exists work_order_completion_log(
     event_id bigint primary key,
     work_order_id int not null
 )engine=InnoDB;
+
+create table if not exists device(
+    id int primary key,
+    model varchar(100) not null
+)engine=InnoDB;
